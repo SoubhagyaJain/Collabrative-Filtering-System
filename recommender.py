@@ -64,7 +64,7 @@ def prepare_data():
     return movies_df, ratings_df, rating_cosine_similarity, movies_title_df
 
 
-def movie_recommender_run(user_Name, movies_df, ratings_df, rating_cosine_similarity, movies_title_df):
+def movie_recommender_run(user_Name, movies_df, ratings_df, rating_cosine_similarity, movies_title_df, variant="control"):
     """
     Get recommendations for a specific user by name
     
@@ -80,8 +80,12 @@ def movie_recommender_run(user_Name, movies_df, ratings_df, rating_cosine_simila
     """
     # Get ID from Name
     user_ID = movies_df.loc[movies_df['User_Names'] == user_Name].User_ID.values[0]
-    # Call the function
-    temp = movie_recommender(ratings_df, rating_cosine_similarity, user_ID)
+    # Route recommendation strategy by experiment variant
+    if variant == "treatment":
+        # Placeholder: treatment pipeline can diverge here from CF baseline.
+        temp = movie_recommender(ratings_df, rating_cosine_similarity, user_ID)
+    else:
+        temp = movie_recommender(ratings_df, rating_cosine_similarity, user_ID)
     # Join with the movie_title_df to get the movie titles
     top_k_rec = temp.merge(movies_title_df, how='inner')
     return top_k_rec

@@ -1,9 +1,17 @@
+import logging
 import pandas as pd
 import numpy as np
 import streamlit as st
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from recommender import prepare_data, movie_recommender_run
+from experiments import (
+    EXPERIMENT_NAME,
+    EXPERIMENT_START_DATE,
+    EXPERIMENT_TRAFFIC_SPLIT,
+    EXPERIMENT_SUCCESS_METRICS,
+    assign_variant,
+)
 
 #Set page configuration
 st.set_page_config(layout = "wide", page_title = "Movie Recommendation App", page_icon = ":Cinema:")
@@ -29,8 +37,30 @@ User_Name = st.selectbox(
 )
 
 st.write("This user might be interested in the following movies:")
-#Find and display recommendations for selected users
-result = movie_recommender_run(User_Name, movies_df, ratings_df, rating_cosine_similarity, movies_title_df)
+
+user_id = movies_df.loc[movies_df["User_Names"] == User_Name].User_ID.values[0]
+variant = assign_variant(user_id, EXPERIMENT_NAME, EXPERIMENT_TRAFFIC_SPLIT)
+
+# Find and display recommendations for selected users
+result = movie_recommender_run(
+    User_Name,
+    movies_df,
+    ratings_df,
+    rating_cosine_similarity,
+    movies_title_df,
+    variant=variant,
+)
+
+logging.info(
+    "recommendation_request experiment=%s start_date=%s user_id=%s variant=%s metrics=%s",
+    EXPERIMENT_NAME,
+    EXPERIMENT_START_DATE,
+    user_id,
+    variant,
+    ",".join(EXPERIMENT_SUCCESS_METRICS),
+)
+
+st.caption(f"Experiment variant: {variant}")
 st.table(result.Movie_Title)
 
 # Display details of provided recommendations
