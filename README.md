@@ -36,8 +36,8 @@ Before you start, make sure you have the following installed on your computer:
 
 **Option A: Using Git (recommended)**
 ```bash
-git clone https://github.com/Sam0064324314/Collabrative-Filtering-System.git
-cd Collabrative-Filtering-System
+git clone https://github.com/SoubhagyaJain/Personal-collabrative-system.git
+cd Personal-collabrative-system
 ```
 
 **Option B: Download ZIP**
@@ -247,7 +247,7 @@ Contributions are welcome! Feel free to:
 
 ## 👤 Author
 
-Sam0064324314 - [GitHub Profile](https://github.com/Sam0064324314)
+SoubhagyaJain - [GitHub Profile](https://github.com/SoubhagyaJain)
 
 ---
 
