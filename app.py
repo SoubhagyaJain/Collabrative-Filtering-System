@@ -4,6 +4,7 @@ import streamlit as st
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from recommender import prepare_data, movie_recommender_run
+from analytics import load_event_logs, compute_variant_metrics
 
 #Set page configuration
 st.set_page_config(layout = "wide", page_title = "Movie Recommendation App", page_icon = ":Cinema:")
@@ -67,3 +68,42 @@ fig.update_layout(height=900,width=800, showlegend=False, title= "Ratings of Sug
 
 st.plotly_chart(fig, use_container_width=True)
 
+
+
+# Admin/debug analytics panel for A/B event logs
+with st.expander("Admin / Debug: Experiment analytics", expanded=False):
+    st.caption("Compute per-variant metrics from event logs (CSV).")
+    logs_path = st.text_input("Event log CSV path", value="event_logs.csv")
+    baseline_variant = st.text_input("Baseline variant (optional)", value="")
+
+    try:
+        logs_df = load_event_logs(logs_path)
+        if logs_df.empty:
+            st.info("No logs found (or file is empty). Add a CSV with `variant` and `event_type` columns.")
+        else:
+            metrics_df = compute_variant_metrics(logs_df, baseline_variant=baseline_variant or None)
+            formatted = metrics_df.copy()
+            pct_cols = [
+                "ctr",
+                "ctr_ci_low",
+                "ctr_ci_high",
+                "engagement_rate",
+                "engagement_ci_low",
+                "engagement_ci_high",
+                "ctr_uplift_vs_baseline",
+            ]
+            for col in pct_cols:
+                if col in formatted.columns:
+                    formatted[col] = formatted[col].map(lambda x: f"{x:.2%}" if pd.notna(x) else "-")
+
+            if "avg_rank_clicked" in formatted.columns:
+                formatted["avg_rank_clicked"] = formatted["avg_rank_clicked"].map(
+                    lambda x: f"{x:.2f}" if pd.notna(x) else "-"
+                )
+
+            st.dataframe(formatted, use_container_width=True)
+            st.caption(
+                "Includes sample sizes (`impressions`) and Wilson 95% confidence intervals for CTR and engagement rate."
+            )
+    except Exception as exc:
+        st.error(f"Unable to compute analytics: {exc}")
