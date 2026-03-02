@@ -1,0 +1,4 @@
+timestamp_utc,dataset_path,variant,precision_at_k,recall_at_k,ndcg_at_k,catalog_coverage,users_evaluated,interactions_train,interactions_test,k,leave_last_n
+2026-03-02T02:54:43.066315+00:00,Movie_data.csv,baseline,0.011864,0.118644,0.060403,0.294223,944,99059,944,10,1
+2026-03-02T02:54:43.066315+00:00,Movie_data.csv,popularity,0.008581,0.085805,0.044865,0.054199,944,99059,944,10,1
+2026-03-02T02:54:43.066315+00:00,Movie_data.csv,random,0.000742,0.007415,0.002700,0.994044,944,99059,944,10,1
