@@ -3,7 +3,7 @@ import numpy as np
 import streamlit as st
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from recommender import prepare_data, movie_recommender_run
+from recommender import prepare_data, recommend
 
 #Set page configuration
 st.set_page_config(layout = "wide", page_title = "Movie Recommendation App", page_icon = ":Cinema:")
@@ -30,7 +30,7 @@ User_Name = st.selectbox(
 
 st.write("This user might be interested in the following movies:")
 #Find and display recommendations for selected users
-result = movie_recommender_run(User_Name, movies_df, ratings_df, rating_cosine_similarity, movies_title_df)
+result = recommend(User_Name, top_n=10, movies_df=movies_df, ratings_df=ratings_df, rating_cosine_similarity=rating_cosine_similarity, movies_title_df=movies_title_df)
 st.table(result.Movie_Title)
 
 # Display details of provided recommendations
